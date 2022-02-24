@@ -1,22 +1,21 @@
 'use strict';
 
+import * as path from 'path';
+import * as vscode from 'vscode';
+import { LanguageClient } from 'vscode-languageclient/node';
+import { spawn } from 'child_process';
 
-var path = require('path');
-var vscode = require('vscode');
-var vscode_lc = require('vscode-languageclient');
-var spawn = require('child_process').spawn;
 
-
-function activate(context) {
+function activate(context: vscode.ExtensionContext) {
     var serverInfo = function () {
         // Connect to the language server via a io channel
         var jar = context.asAbsolutePath(path.join('resources', 'de.fraunhofer.ipa.kinematics.xtext.ide-1.0.0-SNAPSHOT-ls.jar'));
         var child = spawn('java', ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n,quiet=y', '-jar', jar, '-log debug']);
         console.log(child.stdout.toString());
-        child.stdout.on('data', function (chunk) {
+        child.stdout.on('data', function (chunk: any) {
             console.log(chunk.toString());
         });
-        child.stderr.on('data', function (chunk) {
+        child.stderr.on('data', function (chunk: any) {
             console.error(chunk.toString());
         });
         return Promise.resolve(child);
@@ -25,8 +24,8 @@ function activate(context) {
         documentSelector: ['kinematics']
     };
     // Create the language client and start the client.
-    var disposable = new vscode_lc.LanguageClient('MYDSL1', serverInfo, clientOptions).start();
-    // Push the disposable to the context's subscriptions so that the 
+    var disposable = new LanguageClient('MYDSL1', serverInfo, clientOptions).start();
+    // Push the disposable to the context's subscriptions so that the
     // client can be deactivated on extension deactivation
     context.subscriptions.push(disposable);
 
@@ -37,7 +36,7 @@ function activate(context) {
 
     context.subscriptions.push(disposableSidePreview);
 
-    function initKinematicsPreview(context) {
+    function initKinematicsPreview(context: vscode.ExtensionContext) {
        // Create and show a new webview
       const panel = vscode.window.createWebviewPanel(
         // Webview id
@@ -55,12 +54,7 @@ function activate(context) {
     }
 }
 
-function getWebviewContent(context, panel) {
-  const threejs =  vscode.Uri.file(context.extensionPath+"/js/three.js");  
-  const threejsUri = panel.webview.asWebviewUri(threejs);
-  const geometryjs =  vscode.Uri.file(context.extensionPath+"/js/geometry.js");  
-  const geometryjsUri = panel.webview.asWebviewUri(geometryjs);
-
+function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.WebviewPanel) {
   return `
   <!DOCTYPE html>
   <html>
@@ -72,8 +66,7 @@ function getWebviewContent(context, panel) {
       </style>
     </head>
     <body>
-      <script src=${threejsUri}></script>
-      <script src=${geometryjsUri}></script>
+      <p>Hi</p>
     </body>
   </html>
   `

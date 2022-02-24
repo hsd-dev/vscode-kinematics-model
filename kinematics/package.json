@@ -3,7 +3,6 @@
   "displayName": "Kinematics",
   "description": "Kinematics language support",
   "version": "0.0.1",
-  "type": "module",
   "engines": {
     "vscode": "^1.49.0"
   },
@@ -13,7 +12,7 @@
   "activationEvents": [
     "onLanguage:kinematics"
   ],
-  "main": "src/extension.ts",
+  "main": "lib/extension.js",
   "contributes": {
     "languages": [
       {
@@ -43,6 +42,9 @@
         "when": "editorLangId == xacro"
       }
     ]
+  },
+  "scripts": {
+    "build": "tsc -p ."
   },
   "devDependencies": {
     "typescript": "^4.5.5",
