@@ -1,0 +1,32 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Kinematics",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.kinematics",
+				"match": "\\b(Robot|body|Body|macro|Macro|macroCall|MacroCall|parameter|Parameter|LinkRef|String|ParameterCall|value|name|link|Link|visual|Visual|geometry|Geometry|mesh|Mesh|filename|joint|Joint|type|parent|child|origin|Pose|rpy|xyz)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.kinematics",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.kinematics",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.kin"
+}
