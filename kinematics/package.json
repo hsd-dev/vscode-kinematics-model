@@ -34,6 +34,14 @@
         "scopeName": "source.kin",
         "path": "./syntaxes/kinematics.tmLanguage.json"
       }
+    ],
+    "commands": [
+      {
+        "command": "kinematics.openPreview",
+        "title": "Open kinematics preview window",
+        "category": "Kinematics",
+        "when": "editorLangId == xacro"
+      }
     ]
   },
   "devDependencies": {
