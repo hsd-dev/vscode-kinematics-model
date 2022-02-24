@@ -1,9 +1,9 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-var path = require("path");
-var vscode = require("vscode");
-var node_1 = require("vscode-languageclient/node");
-var child_process_1 = require("child_process");
+const path = require("path");
+const vscode = require("vscode");
+const node_1 = require("vscode-languageclient/node");
+const child_process_1 = require("child_process");
 function activate(context) {
     var serverInfo = function () {
         // Connect to the language server via a io channel
@@ -27,13 +27,13 @@ function activate(context) {
     // client can be deactivated on extension deactivation
     context.subscriptions.push(disposable);
     // related to URDF preview
-    var disposableSidePreview = vscode.commands.registerCommand('kinematics.openPreview', function () {
+    const disposableSidePreview = vscode.commands.registerCommand('kinematics.openPreview', () => {
         initKinematicsPreview(context);
     });
     context.subscriptions.push(disposableSidePreview);
     function initKinematicsPreview(context) {
         // Create and show a new webview
-        var panel = vscode.window.createWebviewPanel(
+        const panel = vscode.window.createWebviewPanel(
         // Webview id
         'kinematics.preview', 
         // Webview title
@@ -47,7 +47,21 @@ function activate(context) {
     }
 }
 function getWebviewContent(context, panel) {
-    return "\n  <!DOCTYPE html>\n  <html>\n    <head>\n      <meta charset=\"utf-8\">\n      <title>My first three.js app</title>\n      <style>\n        body { margin: 0; }\n      </style>\n    </head>\n    <body>\n      <p>Hi</p>\n    </body>\n  </html>\n  ";
+    return `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title>My first three.js app</title>
+      <style>
+        body { margin: 0; }
+      </style>
+    </head>
+    <body>
+      <p>Hi</p>
+    </body>
+  </html>
+  `;
 }
 exports.activate = activate;
 //# sourceMappingURL=extension.js.map
