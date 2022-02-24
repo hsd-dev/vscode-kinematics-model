@@ -1,0 +1,46 @@
+{
+  "name": "kinematics",
+  "displayName": "Kinematics",
+  "description": "Kinematics language support",
+  "version": "0.0.1",
+  "type": "module",
+  "engines": {
+    "vscode": "^1.49.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:kinematics"
+  ],
+  "main": "src/extension.ts",
+  "contributes": {
+    "languages": [
+      {
+        "id": "kinematics",
+        "aliases": [
+          "Kinematics",
+          "kinematics"
+        ],
+        "extensions": [
+          ".kin"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "kinematics",
+        "scopeName": "source.kin",
+        "path": "./syntaxes/kinematics.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^4.5.5",
+    "vscode": "^1.1.37"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^7.0.0"
+  }
+}
