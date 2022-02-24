@@ -4,6 +4,9 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { spawn } from 'child_process';
+import * as antlr4ts from 'antlr4ts';
+import { DebugInternalKinematicsLexer } from './parser/DebugInternalKinematicsLexer';
+import { DebugInternalKinematicsParser } from './parser/DebugInternalKinematicsParser';
 
 
 function activate(context: vscode.ExtensionContext) {
@@ -51,6 +54,7 @@ function activate(context: vscode.ExtensionContext) {
         }
       );
       panel.webview.html = getWebviewContent(context, panel);
+      getModel();
     }
 }
 
@@ -70,6 +74,22 @@ function getWebviewContent(context: vscode.ExtensionContext, panel: vscode.Webvi
     </body>
   </html>
   `
+}
+
+async function getModel() {
+  const document = vscode.window.activeTextEditor?.document;
+  if (document) {
+    console.log(document.getText())
+
+    // Create the lexer and parser
+    let inputStream = antlr4ts.CharStreams.fromString(document.getText());
+    console.log(inputStream)
+    let lexer = new DebugInternalKinematicsLexer(inputStream);
+    let tokenStream = new antlr4ts.CommonTokenStream(lexer);
+    let parser = new DebugInternalKinematicsParser(tokenStream);
+    let parse_tree = parser.ruleRobot()
+    console.log(parse_tree.getChild)
+  }
 }
 
 exports.activate = activate;
