@@ -13,6 +13,7 @@ const path = require("path");
 const vscode = require("vscode");
 const node_1 = require("vscode-languageclient/node");
 const child_process_1 = require("child_process");
+const viewer_1 = require("./viewer");
 function activate(context) {
     var serverInfo = function () {
         // Connect to the language server via a io channel
@@ -57,23 +58,28 @@ function activate(context) {
     }
     function setActiveEditorContent(panel) {
         var _a;
-        const document = (_a = vscode.window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document;
-        if (document) {
-            panel.webview.postMessage(loadModel(document));
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            const document = (_a = vscode.window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document;
+            if (document) {
+                panel.webview.postMessage(yield loadModel(document));
+            }
+        });
     }
     function loadModel(document) {
         return __awaiter(this, void 0, void 0, function* () {
-            return { message: 'loadModel' };
+            var model = yield (0, viewer_1.getModel)(document.getText());
+            return JSON.stringify(model);
         });
     }
     function getWebviewContent(context, panel) {
         const threejs = vscode.Uri.file(context.extensionPath + "/js/three.js");
         const threejsUri = panel.webview.asWebviewUri(threejs);
-        const ros3d = vscode.Uri.file(context.extensionPath + "/src/ros3djs/build/ros3d.js");
+        const ros3d = vscode.Uri.file(context.extensionPath + "/js/ros3d.js");
         const ros3dUri = panel.webview.asWebviewUri(ros3d);
         const roslib = vscode.Uri.file(context.extensionPath + "/node_modules/roslib/build/roslib.js");
         const roslibUri = panel.webview.asWebviewUri(roslib);
+        const urdf = vscode.Uri.file(context.extensionPath + "/lib/urdf.js");
+        const urdfUri = panel.webview.asWebviewUri(urdf);
         return `
       <!DOCTYPE html>
       <html>
@@ -86,11 +92,63 @@ function activate(context) {
           <script src=${threejsUri}></script>
           <script src=${roslibUri}></script>
           <script src=${ros3dUri}></script>
+          <script src=${urdfUri}></script>
           <script>
             window.onload = init;
 
             var global = this;
             var viewer = undefined;
+
+            window.addEventListener('message', (event) => {
+              let model = JSON.parse(event.data);
+              // console.log(model);
+              // for(link of model.links) {
+              //   if (link.visual !== undefined) {
+                  
+              //   }
+              // }
+              let parent = undefined;
+              if (model.joints[0].parent.visual !== undefined) {
+                var origin = new ROSLIB.Pose({
+                  position : new ROSLIB.Vector3(0, 0, 0),
+                  orientation : new ROSLIB.Quaternion(0, 0, 0, 1)
+                });
+                
+                parent = addMesh(model.joints[0].parent.visual.geometry.filename, origin);
+                this.viewer.addObject(parent);
+                
+              }
+              console.log(model.joints[1]);
+              for(joint of model.joints) {
+                if (joint.child.visual !== undefined) {
+                  let filename = joint.child.visual.geometry.filename;
+                  mesh = addMesh(filename, joint.origin);
+                  parent.add(mesh);
+                  parent = mesh;
+                  console.log(parent);
+                  console.log(joint);
+                }
+              }
+            });
+
+            function addMesh(filename, origin) {
+              console.log(filename);
+              const colorMaterial = ROS3D.makeColorMaterial(255, 0, 0, 1);
+              var mesh = new ROS3D.MeshResource({
+                path : 'https://raw.githubusercontent.com/ros-industrial/kuka_experimental/melodic-devel',
+                resource : filename,   // needs to be checked what type of geometry this is
+                material : colorMaterial
+              });
+              updatePose(mesh, origin);
+              return mesh;
+            }
+
+            function updatePose(obj, pose) {
+              obj.position.set( pose.position.x, pose.position.y, pose.position.z );
+              obj.quaternion.set(pose.orientation.x, pose.orientation.y,
+                  pose.orientation.z, pose.orientation.w);
+              obj.updateMatrixWorld(true);
+            };
 
             function init() {
               this.viewer = new ROS3D.Viewer({
