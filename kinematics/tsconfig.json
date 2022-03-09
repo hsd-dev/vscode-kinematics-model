@@ -20,5 +20,9 @@
     },
     "include": [
         "src", "@types/three"
-    ]
+    ],
+	"exclude": [
+		"node_modules",
+		"src/urdf"
+	]
 }
