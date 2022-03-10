@@ -3,7 +3,6 @@
   "displayName": "Kinematics",
   "description": "Kinematics language support",
   "version": "0.0.1",
-  "type": "module",
   "engines": {
     "vscode": "^1.49.0"
   },
@@ -13,7 +12,7 @@
   "activationEvents": [
     "onLanguage:kinematics"
   ],
-  "main": "src/extension.ts",
+  "main": "lib/extension.js",
   "contributes": {
     "languages": [
       {
@@ -34,13 +33,35 @@
         "scopeName": "source.kin",
         "path": "./syntaxes/kinematics.tmLanguage.json"
       }
+    ],
+    "commands": [
+      {
+        "command": "kinematics.openPreview",
+        "title": "Open kinematics preview window",
+        "category": "Kinematics",
+        "when": "editorLangId == xacro"
+      }
     ]
   },
+  "scripts": {
+    "build-viewer": "webpack --mode=production --config ./src/urdf/webpack.config.js",
+    "antlr4ts": "antlr4ts -visitor src/parser/DebugInternalKinematics.g",
+    "build": "tsc -p . && npm run build-viewer"
+  },
   "devDependencies": {
-    "typescript": "^4.5.5",
-    "vscode": "^1.1.37"
+    "@types/vscode": "^1.49.0",
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.5.5"
   },
   "dependencies": {
+    "@types/roslib": "^1.1.8",
+    "@types/three": "^0.137.0",
+    "antlr4ts": "^0.5.0-alpha.4",
+    "assert": "^2.0.0",
+    "grunt-cli": "^1.4.3",
+    "ros3djs": "file:src/ros3djs",
+    "util": "^0.12.4",
+    "vscode": "^1.1.37",
     "vscode-languageclient": "^7.0.0"
   }
 }
