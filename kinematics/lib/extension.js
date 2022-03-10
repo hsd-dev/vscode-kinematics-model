@@ -101,32 +101,31 @@ function activate(context) {
 
             window.addEventListener('message', (event) => {
               let model = JSON.parse(event.data);
-              // console.log(model);
-              // for(link of model.links) {
-              //   if (link.visual !== undefined) {
-                  
-              //   }
-              // }
+
               let parent = undefined;
               if (model.joints[0].parent.visual !== undefined) {
                 var origin = new ROSLIB.Pose({
                   position : new ROSLIB.Vector3(0, 0, 0),
                   orientation : new ROSLIB.Quaternion(0, 0, 0, 1)
                 });
-                
+
                 parent = addMesh(model.joints[0].parent.visual.geometry.filename, origin);
+                let axes = new ROS3D.Axes({});
+                parent.add(axes);
                 this.viewer.addObject(parent);
-                
               }
-              console.log(model.joints[1]);
               for(joint of model.joints) {
+                let axes = new ROS3D.Axes({});
                 if (joint.child.visual !== undefined) {
                   let filename = joint.child.visual.geometry.filename;
                   mesh = addMesh(filename, joint.origin);
+                  mesh.add(axes);
                   parent.add(mesh);
                   parent = mesh;
-                  console.log(parent);
-                  console.log(joint);
+                } else {
+                  updatePose(axes, joint.origin);
+                  parent.add(axes);
+                  parent = axes;    // TODO: this is mostly not right
                 }
               }
             });
@@ -159,7 +158,7 @@ function activate(context) {
               });
 
               // Add a grid.
-              this.viewer.addObject(new ROS3D.Grid());
+              this.viewer.addObject(new ROS3D.Grid({color: '#303030'}));
             }
           </script>
         </head>

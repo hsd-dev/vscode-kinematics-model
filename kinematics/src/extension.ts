@@ -108,14 +108,22 @@ function activate(context: vscode.ExtensionContext) {
                 });
 
                 parent = addMesh(model.joints[0].parent.visual.geometry.filename, origin);
+                let axes = new ROS3D.Axes({});
+                parent.add(axes);
                 this.viewer.addObject(parent);
               }
               for(joint of model.joints) {
+                let axes = new ROS3D.Axes({});
                 if (joint.child.visual !== undefined) {
                   let filename = joint.child.visual.geometry.filename;
                   mesh = addMesh(filename, joint.origin);
+                  mesh.add(axes);
                   parent.add(mesh);
                   parent = mesh;
+                } else {
+                  updatePose(axes, joint.origin);
+                  parent.add(axes);
+                  parent = axes;    // TODO: this is mostly not right
                 }
               }
             });
