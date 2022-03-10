@@ -148,7 +148,7 @@ function activate(context: vscode.ExtensionContext) {
               });
 
               // Add a grid.
-              this.viewer.addObject(new ROS3D.Grid());
+              this.viewer.addObject(new ROS3D.Grid({color: '#303030'}));
             }
           </script>
         </head>
