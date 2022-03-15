@@ -91,8 +91,16 @@ class TreeShapeListener implements DebugInternalKinematicsListener {
     // since links are referenced in the joints
     public enterRuleVisual(ctx: RuleVisualContext): void {
         let visual = new UrdfVisual();
-        // let rpy = ctx.getChild(3).getChild(3).text.split(' ');;
-        let xyz = ctx.getChild(3).getChild(5).text.split(' ');;
+
+        let pose = undefined;
+        let xyz = ['0', '0', '0'];
+        let rpy = ['0', '0', '0', '1'];
+
+        pose = ctx.rulePose();
+        if(pose !== undefined) {
+            // rpy = pose.getChild(3).text.split(' ');
+            xyz = ctx.getChild(5).text.split(' ');
+        }
 
         var position = new Vector3({
             x : parseFloat(xyz[0]),
@@ -100,10 +108,10 @@ class TreeShapeListener implements DebugInternalKinematicsListener {
             z : parseFloat(xyz[2])
         });
         var orientation = new Quaternion({
-            x : 0,
-            y : 0,
-            z : 0,
-            w : 1
+            x : parseFloat(rpy[0]),
+            y : parseFloat(rpy[1]),
+            z : parseFloat(rpy[2]),
+            w : parseFloat(rpy[3])
         });
         var origin = new Pose({
             position : position,
@@ -115,21 +123,24 @@ class TreeShapeListener implements DebugInternalKinematicsListener {
         let name = ctx.parent?.getChild(3).text.replace(/"/g, '');
         let link = this.linkMap.get(name!);
 
-        let geom = ctx.getChild(5).getChild(3);
+        let geom = ctx.ruleGeometry();
+        if(geom !== undefined) {
+            let geomType = geom.getChild(3);
 
-        // the same steps need to be repeated for other geometries
-        if (geom instanceof RuleMeshContext) {
-            let uri = geom.getChild(3).text  // id=3 is hardcoded; not a good idea
-                .replace('package://', '')
-                .replace(/"/g, '');
+            if (geomType instanceof RuleMeshContext) {
+                let uri = geomType.getChild(3).text  // id=3 is hardcoded; not a good idea
+                    .replace('package://', '')
+                    .replace(/"/g, '');
 
-            let mesh = new UrdfMesh();
-            mesh.filename = uri;
-            visual.geometry = mesh;
+                let mesh = new UrdfMesh();
+                mesh.filename = uri;
+                visual.geometry = mesh;
+
+                // update link with visual (geometry)
+                link!.visual = visual;
+                Object.assign(this.linkMap, {name: link});
+            }
         }
-        // update link with visual (geometry)
-        link!.visual = visual;
-        Object.assign(this.linkMap, {name: link});
     }
 }
 

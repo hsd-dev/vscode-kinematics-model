@@ -134,7 +134,7 @@ function activate(context) {
               console.log(filename);
               const colorMaterial = ROS3D.makeColorMaterial(255, 0, 0, 1);
               var mesh = new ROS3D.MeshResource({
-                path : 'https://raw.githubusercontent.com/ros-industrial/kuka_experimental/melodic-devel',
+                path : 'https://raw.githubusercontent.com/ros-industrial/universal_robot/kinetic-devel',
                 resource : filename,   // needs to be checked what type of geometry this is
                 material : colorMaterial
               });
