@@ -84,19 +84,24 @@ class TreeShapeListener {
     enterRuleVisual(ctx) {
         var _a;
         let visual = new urdf_1.UrdfVisual();
-        // let rpy = ctx.getChild(3).getChild(3).text.split(' ');;
-        let xyz = ctx.getChild(3).getChild(5).text.split(' ');
-        ;
+        let pose = undefined;
+        let xyz = ['0', '0', '0'];
+        let rpy = ['0', '0', '0', '1'];
+        pose = ctx.rulePose();
+        if (pose !== undefined) {
+            // rpy = pose.getChild(3).text.split(' ');
+            xyz = ctx.getChild(5).text.split(' ');
+        }
         var position = new roslib_1.Vector3({
             x: parseFloat(xyz[0]),
             y: parseFloat(xyz[1]),
             z: parseFloat(xyz[2])
         });
         var orientation = new roslib_1.Quaternion({
-            x: 0,
-            y: 0,
-            z: 0,
-            w: 1
+            x: parseFloat(rpy[0]),
+            y: parseFloat(rpy[1]),
+            z: parseFloat(rpy[2]),
+            w: parseFloat(rpy[3])
         });
         var origin = new roslib_1.Pose({
             position: position,
@@ -106,19 +111,21 @@ class TreeShapeListener {
         // get link name to update link obj
         let name = (_a = ctx.parent) === null || _a === void 0 ? void 0 : _a.getChild(3).text.replace(/"/g, '');
         let link = this.linkMap.get(name);
-        let geom = ctx.getChild(5).getChild(3);
-        // the same steps need to be repeated for other geometries
-        if (geom instanceof DebugInternalKinematicsParser_1.RuleMeshContext) {
-            let uri = geom.getChild(3).text // id=3 is hardcoded; not a good idea
-                .replace('package://', '')
-                .replace(/"/g, '');
-            let mesh = new urdf_1.UrdfMesh();
-            mesh.filename = uri;
-            visual.geometry = mesh;
+        let geom = ctx.ruleGeometry();
+        if (geom !== undefined) {
+            let geomType = geom.getChild(3);
+            if (geomType instanceof DebugInternalKinematicsParser_1.RuleMeshContext) {
+                let uri = geomType.getChild(3).text // id=3 is hardcoded; not a good idea
+                    .replace('package://', '')
+                    .replace(/"/g, '');
+                let mesh = new urdf_1.UrdfMesh();
+                mesh.filename = uri;
+                visual.geometry = mesh;
+                // update link with visual (geometry)
+                link.visual = visual;
+                Object.assign(this.linkMap, { name: link });
+            }
         }
-        // update link with visual (geometry)
-        link.visual = visual;
-        Object.assign(this.linkMap, { name: link });
     }
 }
 function getModel(modelStr) {
