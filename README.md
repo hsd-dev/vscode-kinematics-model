@@ -1,5 +1,10 @@
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # vscode-kinematics-model
-VS Code extension for kinematics model (https://github.com/ipa320/kinematics-model)
+
+We introduce a text and graphical IDE based on [VSCode](https://code.visualstudio.com/api) (desktop) and [Theia](https://theia-ide.org/) (web), with the kinematic model descibed in https://github.com/ipa320/kinematics-model as the base. This IDE allows creating kinematic models from scratch and composing those models. 
+
+The text-based editor provides typical IDE features like code completion and navigation to declaration of a symbol. The graphical editor allows editing and visualizing the model as a TF tree. A live visualization of the models can be previewed in a side panel while editing in both tools. 
 
 ### Usage
 ```
