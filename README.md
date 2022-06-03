@@ -15,6 +15,7 @@ vscode-kinematics-model/kinematics$ code .
 To start the extension in debug mode, press `F5`.
 
 ![Screenshot from 2022-03-10 09-27-07](https://user-images.githubusercontent.com/31062848/157628130-10dafe63-51e5-4520-8265-d788e73cee0b.png)
+Some examples of the models that can be used for composition and visualization can be found [here](https://github.com/ipa-hsd/kinematics-model/tree/lsp_support/examples)
 
 ### Dependencies
 [ros3djs](https://github.com/RobotWebTools/ros3djs): Screen interaction, loading meshes, visualizing coordinate frames  
