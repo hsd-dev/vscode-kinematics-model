@@ -17,6 +17,10 @@ To start the extension in debug mode, press `F5`.
 ![Screenshot from 2022-03-10 09-27-07](https://user-images.githubusercontent.com/31062848/157628130-10dafe63-51e5-4520-8265-d788e73cee0b.png)
 Some examples of the models that can be used for composition and visualization can be found [here](https://github.com/ipa-hsd/kinematics-model/tree/lsp_support/examples)
 
+### VSCode Marketplace
+The extension is also made available on VSCode marketplace: https://marketplace.visualstudio.com/items?itemName=ipa-hsd.kinematics
+Please check [here](https://code.visualstudio.com/docs/editor/extension-marketplace#:~:text=You%20can%20browse%20and%20install,on%20the%20VS%20Code%20Marketplace.) for details on how to install VS Code extension.
+
 ### Dependencies
 [ros3djs](https://github.com/RobotWebTools/ros3djs): Screen interaction, loading meshes, visualizing coordinate frames  
 [roslibjs](https://github.com/RobotWebTools/roslibjs): Datastructures like `Pose`, `Vector3`, `Quaternion`  
