@@ -2,7 +2,7 @@
   "name": "kinematics",
   "displayName": "Kinematics",
   "description": "Kinematics language support",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "engines": {
     "vscode": "^1.49.0"
   },
