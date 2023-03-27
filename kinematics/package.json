@@ -3,6 +3,7 @@
   "displayName": "Kinematics",
   "description": "Kinematics language support",
   "version": "0.9.0",
+  "publisher": "ipa-hsd",
   "engines": {
     "vscode": "^1.49.0"
   },
@@ -13,6 +14,10 @@
     "onLanguage:kinematics"
   ],
   "main": "lib/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ipa-hsd/vscode-kinematics-model"
+  },
   "contributes": {
     "languages": [
       {
@@ -52,6 +57,7 @@
     "@types/vscode": "^1.49.0",
     "ts-loader": "^8.0.4",
     "typescript": "^4.5.5",
+    "vscode": "^1.1.37",
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
@@ -64,7 +70,6 @@
     "roslib": "latest",
     "three": "latest",
     "util": "^0.12.4",
-    "vscode": "^1.1.37",
     "vscode-languageclient": "^7.0.0",
     "webpack": "^5.76.1"
   }
