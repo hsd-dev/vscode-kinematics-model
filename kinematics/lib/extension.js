@@ -103,6 +103,8 @@ function activate(context) {
 
             window.addEventListener('message', (event) => {
               let [model, robots] = JSON.parse(event.data);
+              console.log(model)
+              console.log(robots)
 
               let parent = undefined;
               if (model.joints[0].parent.visual !== undefined) {
@@ -136,7 +138,7 @@ function activate(context) {
               console.log(filename);
               const colorMaterial = ROS3D.makeColorMaterial(255, 0, 0, 1);
               var mesh = new ROS3D.MeshResource({
-                path : 'https://raw.githubusercontent.com/ros-industrial/universal_robot/kinetic-devel',
+                path : 'https://raw.githubusercontent.com/ros-industrial/kuka_experimental/melodic-devel',
                 resource : filename,   // needs to be checked what type of geometry this is
                 material : colorMaterial
               });

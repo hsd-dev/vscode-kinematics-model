@@ -8,15 +8,15 @@ const LexerATNSimulator_1 = require("antlr4ts/atn/LexerATNSimulator");
 const VocabularyImpl_1 = require("antlr4ts/VocabularyImpl");
 const Utils = require("antlr4ts/misc/Utils");
 class DebugInternalKinematicsLexer extends Lexer_1.Lexer {
-    // tslint:enable:no-trailing-whitespace
-    constructor(input) {
-        super(input);
-        this._interp = new LexerATNSimulator_1.LexerATNSimulator(DebugInternalKinematicsLexer._ATN, this);
-    }
     // @Override
     // @NotNull
     get vocabulary() {
         return DebugInternalKinematicsLexer.VOCABULARY;
+    }
+    // tslint:enable:no-trailing-whitespace
+    constructor(input) {
+        super(input);
+        this._interp = new LexerATNSimulator_1.LexerATNSimulator(DebugInternalKinematicsLexer._ATN, this);
     }
     // @Override
     get grammarFileName() { return "DebugInternalKinematics.g"; }
