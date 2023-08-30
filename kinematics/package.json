@@ -45,6 +45,12 @@
         "title": "Open kinematics preview window",
         "category": "Kinematics",
         "when": "editorLangId == kin"
+      },
+      {
+        "command": "kinematics.generateMCP",
+        "title": "Generate Moveit Config Package",
+        "category": "Kinematics",
+        "when": "editorLangId == kin"
       }
     ]
   },

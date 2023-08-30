@@ -3,7 +3,8 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node';
-import { spawn } from 'child_process';
+import { exec, spawn } from 'child_process';
+import { parse } from 'yaml'
 
 import { getModel } from './viewer';
 
@@ -39,6 +40,12 @@ function activate(context: vscode.ExtensionContext) {
     initKinematicsPreview(context);
   });
   context.subscriptions.push(disposableSidePreview);
+
+  // trigger MCP generation
+  const disposableMCPGeneration = vscode.commands.registerCommand('kinematics.generateMCP', () => {
+    generateMoveitConfigPackage(context);
+  });
+  context.subscriptions.push(disposableMCPGeneration);
 
   function initKinematicsPreview(context: vscode.ExtensionContext) {
     // Create and show a new webview
@@ -169,6 +176,86 @@ function activate(context: vscode.ExtensionContext) {
       </html>
       `
   }
+
+  // test trigger MCP generation
+  function generateMoveitConfigPackage(context: vscode.ExtensionContext) {
+    console.log('generating MCP')
+
+    const document = vscode.window.activeTextEditor?.document;
+    if (document) {
+      let modelStr = document.getText();
+      let modelYAML = parse(modelStr);
+      let name = modelYAML['component']['name']
+      let pkg_name = modelYAML['component']['gitRepo']['package']
+
+      if (modelYAML['component']['group'] === undefined) {
+        vscode.window.showErrorMessage('No planning groups defined. ' +
+          'At least one group needs to be defined to generate a MoveIt! configuration package');
+        return;
+      }
+
+      let group = modelYAML['component']['group'][0];
+      let group_name = group['name'];
+      let base_link = group['base_link'];
+      let end_link = group['end_link'];
+
+      let urdf_path = `/app/kinematic_components_web_app/static/moveit2_ws/install/${pkg_name}/share/${pkg_name}/urdf/${name}.urdf`
+
+      let dockerCmd = 'docker exec urdf-toolchain /bin/bash -c '
+      let rosCmd = `. /app/kinematic_components_web_app/static/moveit2_ws/install/setup.bash; \
+          ros2 run kinematics_model_generator mcp_generator \
+          --urdf ${urdf_path} \
+          --base_link ${base_link} \
+          --end_link ${end_link} \
+          --group_name ${group_name} \
+          --virtual_child_link ${base_link} \
+          --output /app/kinematic_components_web_app/static/moveit2_ws/src/${name}_moveit_config`
+
+      let cmd = dockerCmd + '"' + rosCmd + '"';
+
+      console.log(rosCmd);
+
+      exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.log(`stderr: ${stderr}`);
+
+          //TODO: not sure why is it returning as an error-- fix later
+          // TODO: build the workspace once the package is generated
+
+          // hack to replace include of generated ros2_control.xacro with specified one
+          if (group['ros2_control'] !== undefined) {
+            // prbt_moveit_config/config/prbt.urdf.xacro prbt_support urdf/prbt.ros2_control.xacro
+            let ros2_control_file = group['ros2_control'];
+            let pyCmd = `python3 /app/kinematic_components_web_app/static/moveit2_ws/src/urdf-model/kinematics-model-parser/kinematics_model_generator/scripts/update_mcp.py \
+              /app/kinematic_components_web_app/static/moveit2_ws/src/${name}_moveit_config/config/${name}.urdf.xacro \
+              ${ros2_control_file}`
+
+            cmd = dockerCmd + '"' + pyCmd + '"';
+            console.log(cmd);
+
+            exec(cmd, (error, stdout, stderr) => {
+              if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+              }
+              if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                return;
+              }
+              console.log(`stdout: ${stdout}`);
+            });
+          }
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+      });
+    }
+  }
+
 }
 
 exports.activate = activate;
