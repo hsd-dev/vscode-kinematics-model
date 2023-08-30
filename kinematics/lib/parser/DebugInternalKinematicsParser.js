@@ -17,10 +17,6 @@ const Token_1 = require("antlr4ts/Token");
 const VocabularyImpl_1 = require("antlr4ts/VocabularyImpl");
 const Utils = require("antlr4ts/misc/Utils");
 class DebugInternalKinematicsParser extends Parser_1.Parser {
-    constructor(input) {
-        super(input);
-        this._interp = new ParserATNSimulator_1.ParserATNSimulator(DebugInternalKinematicsParser._ATN, this);
-    }
     // @Override
     // @NotNull
     get vocabulary() {
@@ -35,6 +31,10 @@ class DebugInternalKinematicsParser extends Parser_1.Parser {
     get serializedATN() { return DebugInternalKinematicsParser._serializedATN; }
     createFailedPredicateException(predicate, message) {
         return new FailedPredicateException_1.FailedPredicateException(this, predicate, message);
+    }
+    constructor(input) {
+        super(input);
+        this._interp = new ParserATNSimulator_1.ParserATNSimulator(DebugInternalKinematicsParser._ATN, this);
     }
     // @RuleVersion(0)
     ruleRobot() {
