@@ -44,7 +44,7 @@
         "command": "kinematics.openPreview",
         "title": "Open kinematics preview window",
         "category": "Kinematics",
-        "when": "editorLangId == xacro"
+        "when": "editorLangId == kin"
       }
     ]
   },
