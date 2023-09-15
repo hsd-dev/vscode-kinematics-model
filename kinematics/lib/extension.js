@@ -16,7 +16,7 @@ const vscode = require("vscode");
 const node_1 = require("vscode-languageclient/node");
 const child_process_1 = require("child_process");
 const yaml_1 = require("yaml");
-// import { getModel } from './js/viewer';
+const http = require("http");
 function activate(context) {
     var client;
     let connectionInfo = {
@@ -276,11 +276,6 @@ function activate(context) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             console.log('generating MCP');
-            client.onReady().then(() => {
-                client.sendRequest("kinematics/accept", { "message": "foo" }).then(data => console.log(data)).catch(function () {
-                    console.log("Promise Rejected");
-                });
-            });
             const document = (_a = vscode.window.activeTextEditor) === null || _a === void 0 ? void 0 : _a.document;
             if (document) {
                 let modelStr = document.getText();
@@ -306,9 +301,6 @@ function activate(context) {
                         ros2_control = group['ros2_control'];
                     }
                 }
-                // console.log(group_name);
-                // console.log(base_link);
-                // console.log(end_link);
                 //TODO: extract the root link of the chain
                 let vLink = groups[0]['baseLink'];
                 let urdf_path = `/app/kinematic_components_web_app/static/moveit2_ws/install/${pkg_name}/share/${pkg_name}/urdf/${name}.urdf`;

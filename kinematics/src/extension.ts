@@ -329,9 +329,6 @@ function activate(context: vscode.ExtensionContext) {
           ros2_control = group['ros2_control'];
         }
       }
-      // console.log(group_name);
-      // console.log(base_link);
-      // console.log(end_link);
 
       //TODO: extract the root link of the chain
       let vLink = groups[0]['baseLink'];
@@ -391,7 +388,6 @@ function activate(context: vscode.ExtensionContext) {
       });
     }
   }
-
 }
 
 exports.activate = activate;
