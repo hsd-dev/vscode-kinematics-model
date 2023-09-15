@@ -63,8 +63,20 @@ function activate(context) {
             // Enable scripts in the webview
             enableScripts: true
         });
-        panel.webview.html = getWebviewContent(context, panel);
-        setActiveEditorContent(panel);
+        http.get('http://127.0.0.1:5000/', (response) => {
+            var data = '';
+            response.on('data', (chunk) => {
+                // console.log(`BODY: ${chunk}`);
+                data += `${chunk}`;
+            });
+            response.on('end', () => {
+                // console.log(data);
+                panel.webview.html = data;
+                setActiveEditorContent(panel);
+            });
+        }).on("error", (error) => {
+            console.error('Error during request:', error);
+        });
     }
     function setActiveEditorContent(panel) {
         var _a;
@@ -116,75 +128,7 @@ function activate(context) {
                             }
                         }
                     }
-    function getWebviewContent(context, panel) {
-        const threejs = vscode.Uri.file(context.extensionPath + "/js/three.js");
-        const threejsUri = panel.webview.asWebviewUri(threejs);
-        const ros3d = vscode.Uri.file(context.extensionPath + "/js/ros3d.js");
-        const ros3dUri = panel.webview.asWebviewUri(ros3d);
-        const roslib = vscode.Uri.file(context.extensionPath + "/node_modules/roslib/build/roslib.js");
-        const roslibUri = panel.webview.asWebviewUri(roslib);
-        const urdf = vscode.Uri.file(context.extensionPath + "/lib/urdf.js");
-        const urdfUri = panel.webview.asWebviewUri(urdf);
-        return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>My first three.js app</title>
-          <style>
-            body { margin: 0; }
-          </style>
-          <script src=${threejsUri}></script>
-          <script src=${roslibUri}></script>
-          <script src=${ros3dUri}></script>
-          <script src=${urdfUri}></script>
-          <script>
-            window.onload = init;
-
-            var global = this;
-            var viewer = undefined;
-
-            window.addEventListener('message', (event) => {
-              let [model, robots] = JSON.parse(event.data);
-
-              let parent = undefined;
-              if (model.joints[0].parent.visual !== undefined) {
-                var origin = new ROSLIB.Pose({
-                  position : new ROSLIB.Vector3(0, 0, 0),
-                  orientation : new ROSLIB.Quaternion(0, 0, 0, 1)
-                });
-
-                parent = addMesh(model.joints[0].parent.visual.geometry.filename, origin);
-                let axes = new ROS3D.Axes({});
-                parent.add(axes);
-                this.viewer.addObject(parent);
-              }
-              for(joint of model.joints) {
-                let axes = new ROS3D.Axes({});
-                if (joint.child.visual !== undefined) {
-                  let filename = joint.child.visual.geometry.filename;
-                  mesh = addMesh(filename, joint.origin);
-                  mesh.add(axes);
-                  parent.add(mesh);
-                  parent = mesh;
-                } else {
-                  updatePose(axes, joint.origin);
-                  parent.add(axes);
-                  parent = axes;    // TODO: this is mostly not right
                 }
-              }
-            });
-
-            function addMesh(filename, origin) {
-              console.log(filename);
-              const colorMaterial = ROS3D.makeColorMaterial(255, 0, 0, 1);
-              var mesh = new ROS3D.MeshResource({
-                path : 'https://raw.githubusercontent.com/ros-industrial/universal_robot/kinetic-devel',
-                resource : filename,   // needs to be checked what type of geometry this is
-                material : colorMaterial
-              });
-              updatePose(mesh, origin);
-              return mesh;
             }
             for (var connection of model['connection']) {
                 let baseName = connection.baseAttachment.split('.')[0];
@@ -323,35 +267,9 @@ function activate(context) {
                     group.endLink = addPrefixToLink(end_link, prefix);
                     groups.push(group);
                 });
-
-            function updatePose(obj, pose) {
-              obj.position.set( pose.position.x, pose.position.y, pose.position.z );
-              obj.quaternion.set(pose.orientation.x, pose.orientation.y,
-                  pose.orientation.z, pose.orientation.w);
-              obj.updateMatrixWorld(true);
-            };
-
-            function init() {
-              this.viewer = new ROS3D.Viewer({
-                divID : 'urdf',
-                width : 800,
-                height : 600,
-                antialias : true
-              });
-
-              // Add a grid.
-              this.viewer.addObject(new ROS3D.Grid({color: '#303030'}));
             }
             return groups;
         });
-          </script>
-        </head>
-        <body>
-          <h2>URDF Renderer</h2>
-        </body>
-        <div id="urdf"></div>
-      </html>
-      `;
     }
     // test trigger MCP generation
     function generateMoveitConfigPackage(context) {
