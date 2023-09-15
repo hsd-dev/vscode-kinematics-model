@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
+const net = require("net");
 const roslib = require("roslib");
 const THREE = require("three");
 const vscode = require("vscode");
@@ -19,18 +19,18 @@ const yaml_1 = require("yaml");
 // import { getModel } from './js/viewer';
 function activate(context) {
     var client;
-    var serverInfo = function () {
-        // Connect to the language server via a io channel
-        var jar = context.asAbsolutePath(path.join('resources', 'de.fraunhofer.ipa.kinematics.xtext.ide-1.0.0-SNAPSHOT-ls.jar'));
-        var child = (0, child_process_1.spawn)('java', ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n,quiet=y', '-jar', jar, '-log debug']);
-        console.log(child.stdout.toString());
-        child.stdout.on('data', function (chunk) {
-            console.log(chunk.toString());
-        });
-        child.stderr.on('data', function (chunk) {
-            console.error(chunk.toString());
-        });
-        return Promise.resolve(child);
+    let connectionInfo = {
+        port: 5008,
+        host: "0.0.0.0"
+    };
+    let serverInfo = () => {
+        // Connect to language server via socket
+        let socket = net.connect(connectionInfo);
+        let result = {
+            writer: socket,
+            reader: socket
+        };
+        return Promise.resolve(result);
     };
     var clientOptions = {
         documentSelector: ['kinematics']

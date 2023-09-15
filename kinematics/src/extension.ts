@@ -1,30 +1,32 @@
 'use strict';
 
-import * as path from 'path';
+import * as net from 'net';
 import * as roslib from 'roslib';
 import THREE = require('three');
 import * as vscode from 'vscode';
-import { LanguageClient } from 'vscode-languageclient/node';
-import { exec, spawn } from 'child_process';
+import { LanguageClient, StreamInfo } from 'vscode-languageclient/node';
+import { exec } from 'child_process';
 import { parse } from 'yaml';
 
 
 function activate(context: vscode.ExtensionContext) {
   var client: LanguageClient;
 
-  var serverInfo = function () {
-    // Connect to the language server via a io channel
-    var jar = context.asAbsolutePath(path.join('resources', 'de.fraunhofer.ipa.kinematics.xtext.ide-1.0.0-SNAPSHOT-ls.jar'));
-    var child = spawn('java', ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n,quiet=y', '-jar', jar, '-log debug']);
-    console.log(child.stdout.toString());
-    child.stdout.on('data', function (chunk) {
-      console.log(chunk.toString());
-    });
-    child.stderr.on('data', function (chunk) {
-      console.error(chunk.toString());
-    });
-    return Promise.resolve(child);
+  let connectionInfo = {
+    port: 5008,
+    host: "0.0.0.0"
   };
+
+  let serverInfo = () => {
+    // Connect to language server via socket
+    let socket = net.connect(connectionInfo);
+    let result: StreamInfo = {
+      writer: socket,
+      reader: socket
+    };
+    return Promise.resolve(result);
+  };
+
   var clientOptions = {
     documentSelector: ['kinematics']
   };
