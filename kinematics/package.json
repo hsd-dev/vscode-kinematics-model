@@ -57,7 +57,7 @@
   "scripts": {
     "build-viewer": "webpack --mode=production --config ./src/urdf/webpack.config.js",
     "antlr4ts": "antlr4ts -visitor src/parser/DebugInternalKinematics.g",
-    "build": "tsc -p . && npm run build-viewer"
+    "build": "tsc -p ."
   },
   "devDependencies": {
     "@types/vscode": "^1.49.0",
