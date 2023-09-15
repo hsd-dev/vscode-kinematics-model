@@ -1,1 +1,0 @@
-(()=>{"use strict";!function(){function t(){this.name="",this.links=[],this.joints=[]}t.prototype.add_link=function(t){this.links.push(t)},t.prototype.add_joint=function(t){this.joints.push(t)}}()})();
