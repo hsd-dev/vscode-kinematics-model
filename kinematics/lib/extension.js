@@ -265,6 +265,7 @@ function activate(context) {
                         prefix = prefix_dict[end_component_name];
                     }
                     group.endLink = addPrefixToLink(end_link, prefix);
+                    group['prefix'] = prefix;
                     groups.push(group);
                 });
             }
@@ -293,12 +294,16 @@ function activate(context) {
                 let base_link = '';
                 let end_link = '';
                 let ros2_control = '';
+                let prefix = '';
                 for (const group of groups) {
                     group_name += group['name'] + ' ';
                     base_link += group['baseLink'] + ' ';
                     end_link += group['endLink'] + ' ';
                     if (group['ros2_control'] !== undefined) {
                         ros2_control = group['ros2_control'];
+                    }
+                    if (group['prefix'] !== undefined && group['prefix'] !== '') {
+                        prefix = group['prefix'];
                     }
                 }
                 //TODO: extract the root link of the chain
@@ -329,7 +334,8 @@ function activate(context) {
                             // prbt_moveit_config/config/prbt.urdf.xacro prbt_support urdf/prbt.ros2_control.xacro
                             let pyCmd = `python3 /app/kinematic_components_web_app/static/moveit2_ws/src/urdf-model/kinematics-model-parser/kinematics_model_generator/scripts/update_mcp.py \
               /app/kinematic_components_web_app/static/moveit2_ws/src/${name}_moveit_config/config/${name}.urdf.xacro \
-              ${ros2_control}`;
+              ${ros2_control} \
+              ${prefix}`;
                             cmd = dockerCmd + '"' + pyCmd + '"';
                             console.log(cmd);
                             (0, child_process_1.exec)(cmd, (error, stdout, stderr) => {
