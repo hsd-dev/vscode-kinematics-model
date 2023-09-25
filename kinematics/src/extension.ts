@@ -289,6 +289,7 @@ function activate(context: vscode.ExtensionContext) {
           prefix = prefix_dict[end_component_name];
         }
         group.endLink = addPrefixToLink(end_link, prefix);
+        group['prefix'] = prefix;
 
         groups.push(group);
       });
@@ -320,6 +321,7 @@ function activate(context: vscode.ExtensionContext) {
       let base_link = '';
       let end_link = '';
       let ros2_control = '';
+      let prefix = '';
       for (const group of groups)
       {
         group_name += group['name'] + ' ';
@@ -327,6 +329,9 @@ function activate(context: vscode.ExtensionContext) {
         end_link +=group['endLink'] + ' ';
         if (group['ros2_control'] !== undefined) {
           ros2_control = group['ros2_control'];
+        }
+        if (group['prefix'] !== undefined && group['prefix'] !== '') {
+          prefix = group['prefix'];
         }
       }
 
@@ -366,7 +371,8 @@ function activate(context: vscode.ExtensionContext) {
             let pyCmd = `. /app/kinematic_components_web_app/static/moveit2_ws/install/setup.bash; \
               python3 /app/kinematic_components_web_app/static/moveit2_ws/src/urdf-model/kinematics-model-parser/kinematics_model_generator/scripts/update_mcp.py \
               /app/kinematic_components_web_app/static/moveit2_ws/src/${name}_moveit_config/config/${name}.urdf.xacro \
-              ${ros2_control}`
+              ${ros2_control} \
+              ${prefix}`
 
             cmd = dockerCmd + '"' + pyCmd + '"';
             console.log(cmd);
